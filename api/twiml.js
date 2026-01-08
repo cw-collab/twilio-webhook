@@ -1,6 +1,7 @@
 // api/twiml.js
-// Schritt 1 FINAL: Begrüßung + Call offen halten
+// Schritt 1 FINAL – Call bleibt garantiert offen
 
+const BASE_URL = "https://twilio-webhook-nine.vercel.app";
 const callState = new Map();
 
 export default async function handler(req, res) {
@@ -14,7 +15,7 @@ export default async function handler(req, res) {
 
   res.setHeader("Content-Type", "text/xml");
 
-  // STEP 1: Begrüßung
+  // STEP 1 – Begrüßung
   if (step === 1) {
     callState.set(callSid, 2);
 
@@ -23,17 +24,17 @@ export default async function handler(req, res) {
   <Say voice="alice" language="de-DE">
     Guten Tag. Ich verbinde Sie jetzt mit unserem KI Agenten.
   </Say>
-  <Redirect method="POST">/api/twiml</Redirect>
+  <Redirect method="POST">${BASE_URL}/api/twiml</Redirect>
 </Response>
     `.trim());
     return;
   }
 
-  // STEP 2: Call offen halten (Warteschleife)
+  // STEP 2 – Call offen halten (Endlosschleife)
   res.status(200).send(`
 <Response>
-  <Pause length="60"/>
-  <Redirect method="POST">/api/twiml</Redirect>
+  <Pause length="10"/>
+  <Redirect method="POST">${BASE_URL}/api/twiml</Redirect>
 </Response>
   `.trim());
 }
