@@ -94,7 +94,7 @@ app.post("/agent/answer", (req, res) => {
 // ============================================================
 // START
 // ============================================================
-const PORT = process.env.PORT || 3000;
-
-export default app;
+export default function handler(req, res) {
+  return app(req, res);
+}
 
