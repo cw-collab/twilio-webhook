@@ -1,7 +1,7 @@
 // api/twiml.js
-// Schritt 1: Übergabe an Agent Core (Twilio Media Stream)
+// Schritt 1 FINAL: Begrüßung + Call offen halten
 
-const callState = new Map(); // CallSid → Step
+const callState = new Map();
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   res.setHeader("Content-Type", "text/xml");
 
-  // STEP 1: Begrüßung (Twilio spricht selbst)
+  // STEP 1: Begrüßung
   if (step === 1) {
     callState.set(callSid, 2);
 
@@ -29,12 +29,11 @@ export default async function handler(req, res) {
     return;
   }
 
-  // STEP 2: Übergabe an Agent Core (Live Audio)
+  // STEP 2: Call offen halten (Warteschleife)
   res.status(200).send(`
 <Response>
-  <Connect>
-    <Stream url="wss://localhost:8081/twilio-media" />
-  </Connect>
+  <Pause length="60"/>
+  <Redirect method="POST">/api/twiml</Redirect>
 </Response>
   `.trim());
 }
