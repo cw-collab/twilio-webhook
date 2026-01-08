@@ -15,7 +15,7 @@ const answers = new Map();
 // ============================================================
 // TWILIO → WEBHOOK
 // ============================================================
-app.post("/twiml", async (req, res) => {
+app.post("/", async (req, res) => {
   const callSid = req.body.CallSid;
 
   if (!callSid) {
