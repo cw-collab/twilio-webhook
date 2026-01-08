@@ -1,7 +1,6 @@
-// api/twiml.js
-// Schritt 1 FINAL – Call bleibt garantiert offen
-
 const BASE_URL = "https://twilio-webhook-nine.vercel.app";
+const AGENT_WS = "ws://0.0.0.0:8081/twilio-media";
+
 const callState = new Map();
 
 export default async function handler(req, res) {
@@ -15,26 +14,23 @@ export default async function handler(req, res) {
 
   res.setHeader("Content-Type", "text/xml");
 
-  // STEP 1 – Begrüßung
   if (step === 1) {
     callState.set(callSid, 2);
-
     res.status(200).send(`
 <Response>
   <Say voice="alice" language="de-DE">
-    Guten Tag. Ich verbinde Sie jetzt mit unserem KI Agenten.
+    Ich verbinde Sie jetzt mit unserem KI Agenten.
   </Say>
   <Redirect method="POST">${BASE_URL}/api/twiml</Redirect>
-</Response>
-    `.trim());
+</Response>`.trim());
     return;
   }
 
-  // STEP 2 – Call offen halten (Endlosschleife)
+  // STEP 2: Übergabe an Agent Core
   res.status(200).send(`
 <Response>
-  <Pause length="10"/>
-  <Redirect method="POST">${BASE_URL}/api/twiml</Redirect>
-</Response>
-  `.trim());
+  <Connect>
+    <Stream url="${AGENT_WS}" />
+  </Connect>
+</Response>`.trim());
 }
