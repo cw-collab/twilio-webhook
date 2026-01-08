@@ -1,5 +1,7 @@
 // api/twiml.js
-const callState = new Map(); // CallSid → step
+// Schlanke Twilio-Lösung – kompletter Dialog im Webhook
+
+const callState = new Map(); // CallSid → Step
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -8,15 +10,17 @@ export default async function handler(req, res) {
   }
 
   const callSid = req.body?.CallSid || "demo";
-  const step = (callState.get(callSid) || 1);
+  const step = callState.get(callSid) || 1;
 
-  // Platzhalter – wird in Schritt 2 vom Agenten ersetzt
-  const text =
-    step === 1 ? "Guten Tag. Dies ist Schritt eins."
-  : step === 2 ? "Dies ist Schritt zwei."
-  : "Vielen Dank. Auf Wiederhören.";
+  // === Dialogskript ===
+  const script = [
+    "Guten Tag. Hier spricht der KI Voice Agent.",
+    "Dies ist ein automatisierter Demo-Anruf über Twilio.",
+    "Vielen Dank für Ihre Zeit. Auf Wiederhören."
+  ];
 
-  const hangup = step >= 3;
+  const text = script[step - 1] || script[script.length - 1];
+  const hangup = step >= script.length;
 
   callState.set(callSid, step + 1);
 
