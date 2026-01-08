@@ -1,5 +1,5 @@
 // api/twiml.js
-// Schlanke Twilio-Lösung – kompletter Dialog im Webhook
+// Schritt 1: Übergabe an Agent Core (Twilio Media Stream)
 
 const callState = new Map(); // CallSid → Step
 
@@ -12,23 +12,29 @@ export default async function handler(req, res) {
   const callSid = req.body?.CallSid || "demo";
   const step = callState.get(callSid) || 1;
 
-  // === Dialogskript ===
-  const script = [
-    "Guten Tag. Hier spricht der KI Voice Agent.",
-    "Dies ist ein automatisierter Demo-Anruf über Twilio.",
-    "Vielen Dank für Ihre Zeit. Auf Wiederhören."
-  ];
-
-  const text = script[step - 1] || script[script.length - 1];
-  const hangup = step >= script.length;
-
-  callState.set(callSid, step + 1);
-
   res.setHeader("Content-Type", "text/xml");
+
+  // STEP 1: Begrüßung (Twilio spricht selbst)
+  if (step === 1) {
+    callState.set(callSid, 2);
+
+    res.status(200).send(`
+<Response>
+  <Say voice="alice" language="de-DE">
+    Guten Tag. Ich verbinde Sie jetzt mit unserem KI Agenten.
+  </Say>
+  <Redirect method="POST">/api/twiml</Redirect>
+</Response>
+    `.trim());
+    return;
+  }
+
+  // STEP 2: Übergabe an Agent Core (Live Audio)
   res.status(200).send(`
 <Response>
-  <Say voice="alice" language="de-DE">${text}</Say>
-  ${hangup ? "<Hangup/>" : `<Redirect method="POST">/api/twiml</Redirect>`}
+  <Connect>
+    <Stream url="wss://localhost:8081/twilio-media" />
+  </Connect>
 </Response>
   `.trim());
 }
