@@ -95,6 +95,6 @@ app.post("/agent/answer", (req, res) => {
 // START
 // ============================================================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("🌐 Twilio Webhook listening on port", PORT);
-});
+
+export default app;
+
