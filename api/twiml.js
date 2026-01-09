@@ -31,7 +31,7 @@ export default async function handler(req, res) {
   <Connect>
     <Stream
       url="wss://twilio-gw.cw-voice-agent-demo.de/twilio-media"
-      track="inbound"
+      track="inbound_track"
     />
   </Connect>
 </Response>`.trim());
