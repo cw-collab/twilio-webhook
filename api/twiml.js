@@ -29,7 +29,10 @@ export default async function handler(req, res) {
   res.status(200).send(`
 <Response>
   <Connect>
-    <Stream url="${AGENT_WS}" />
+    <Stream
+      url="wss://twilio-gw.cw-voice-agent-demo.de/twilio-media"
+      track="inbound"
+    />
   </Connect>
 </Response>`.trim());
 }
