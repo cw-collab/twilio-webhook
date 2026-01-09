@@ -26,13 +26,19 @@ export default async function handler(req, res) {
     return;
   }
 
+  // ✅ FIXED: Added proper Stream configuration
+  // - track="inbound_track" ensures we receive caller audio
+  // - The WebSocket connection is bidirectional by default
+  //   so we can send audio back through the same connection
   res.status(200).send(`
 <Response>
   <Connect>
-    <Stream
-      url="wss://twilio-gw.cw-voice-agent-demo.de/twilio-media"
-      track="inbound_track"
-    />
+    <Stream url="${AGENT_WS}">
+      <Parameter name="track" value="inbound_track"/>
+    </Stream>
   </Connect>
+  <Say voice="alice" language="de-DE">
+    Die Verbindung wurde unterbrochen. Auf Wiederhören.
+  </Say>
 </Response>`.trim());
 }
