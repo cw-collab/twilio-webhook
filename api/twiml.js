@@ -1,5 +1,5 @@
 const BASE_URL = "https://twilio-webhook-nine.vercel.app";
-const AGENT_WS = "ws://0.0.0.0:8081/twilio-media";
+const AGENT_WS = "wss://twilio-gw.cw-voice-agent-demo.de/twilio-media";
 
 const callState = new Map();
 
@@ -26,7 +26,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  // STEP 2: Übergabe an Agent Core
   res.status(200).send(`
 <Response>
   <Connect>
